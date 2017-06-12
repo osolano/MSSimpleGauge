@@ -278,4 +278,33 @@
 {
     [self setValue:@(startAngle) forKey:@"startAngle" animated:animted];
 }
+
+#pragma mark - Added autolayout handling
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    
+    CGFloat width = self.bounds.size.width;
+    CGFloat height = self.bounds.size.height;
+    CGFloat needleWidth = width * NEEDLE_BASE_WIDTH_RATIO;
+    
+    // Currently this is a hacky way to handle autolayout for the needleview
+    // need to revisit if see issues in other implementations.
+    if (_value == 0) {
+        [_needleView setFrame:CGRectMake(self.bounds.origin.x, self.bounds.origin.y, needleWidth, width / 2 + 4)];
+        _needleView.layer.anchorPoint = CGPointMake(.5, (height-(needleWidth/2))/height);
+        _needleView.center = CGPointMake(width/2, height-needleWidth/2);
+        [self rotateNeedleByAngle:-90+_startAngle];
+    }
+    
+    _containerLayer.frame = self.bounds;
+    
+    _backgroundArcLayer.frame = self.bounds;
+    _backgroundArcLayer.bounds = _containerLayer.bounds;
+    
+    _valueArcLayer.frame = self.bounds;
+    _valueArcLayer.bounds = _containerLayer.bounds;
+    
+}
+
 @end
